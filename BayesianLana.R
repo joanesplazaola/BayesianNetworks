@@ -120,14 +120,9 @@ data %>%
 # Hemen ikusi da 62cm-ko enana puta bat daola, eta hil ein dou
 data %<>%  filter(DM_Height > 62 | is.na(DM_Height))
 # Jaja puta gorda
-data %<>% filter(DM_Weight < 160)
+data %<>% filter(DM_Weight < 160 | is.na(DM_Weight))
 
 # TODO Hau igual orokorrian ein leike, en plan mutate
-
-data$DM_Age %<>% discretize(breaks = 5)
-data$DM_Height %<>% discretize(breaks = 5)
-data$DM_Weight %<>% discretize(breaks = 5)
-
 
 data %>%
   select(DM_Age, DM_Height, DM_Weight, DM_Gender) %>%
@@ -155,10 +150,14 @@ data %<>% group_by(DM_Gender) %>% mutate(DM_Weight = ifelse(is.na(DM_Weight), me
                                                                                        TRUE), DM_Weight))
 data %<>% ungroup
 
-data %>% mutate(DM_Weight = ifelse(is.na(DM_Weight), median(DM_Weight, na.rm =
-                                                              TRUE), DM_Weight))
-
 data %<>% mutate_if(is.ordered, ~ replace_na(., which.max(table(.))))
+
+
+data$DM_Age %<>% discretize(breaks = 5)
+data$DM_Height %<>% discretize(breaks = 5)
+data$DM_Weight %<>% discretize(breaks = 5)
+
+
 
 data %>% 
   select_if(is.ordered) %>% 
@@ -166,9 +165,6 @@ data %>%
   ggplot(aes(value)) + 
   geom_bar() + 
   facet_wrap(~key, scales = 'free_x')
-
-
-prop.table(table(data$IN_Playing_instruments))
 
 
 # Hirutan banatu biharrekuak:
