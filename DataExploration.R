@@ -33,7 +33,6 @@ data %>%
   select(DM_Age, DM_Height, DM_Weight, DM_Gender) %>%
   ggpairs
 
-# Age NA aldatu medianagaittik
 
 
 
@@ -43,18 +42,3 @@ data %>%
   ggplot(aes(value)) + 
   geom_bar() + 
   facet_wrap(~key, scales = 'free_x')
-
-
-# Hirutan banatu biharrekuak:
-
-data %>%
-  select_if(is.ordered) %>%
-  gather %>%
-  ggplot(aes(value)) +
-  geom_bar() +
-  facet_wrap(~ key, scales = 'free_x')
-
-
-# 1. Aging phobiak ze zerikusi dauka with healthy habits. Emakume eta gizonen arteko alderatzia.
-# 2. Pisua eta pelikulen preferentzian lotura.
-# 3. Zertan gastatzen daben aurreikusi interes eta musika/film gustuen arabera. Sailkatzaile bat sortu (BN)
