@@ -1,7 +1,6 @@
 
 data_weight <-
-  data %>% select("DM_Weight",
-                  "MO_Movies",
+  data %>% select("MO_Movies",
                   "MO_Horror",
                   "MO_Thriller",
                   "MO_Comedy",
@@ -14,6 +13,9 @@ data_weight <-
                   "MO_Western",
                   "MO_Action",
                   "DM_Gender")
+data_weight$DM_Weight <- discretize(data$DM_Weight, breaks = 5)
+
+
 N <- nrow(data)
 n <- round(N * 0.8)
 set.seed(2019)

@@ -16,7 +16,7 @@ library(pROC)
 library(arulesCBA)
 library(kableExtra)
 data <-
-  read_csv("/home/joanes/uni/BayesianNetworks/data/Dataset.csv")
+  read_csv("data/Dataset.csv")
 
 data %<>%  drop_na(DM_Gender)
 
@@ -98,7 +98,7 @@ data %<>% mutate_if(is.ordered, ~ replace_na(., which.max(table(.))))
 
 data$DM_Age %<>% discretize(breaks = 5)
 data$DM_Height %<>% discretize(breaks = 5)
-data$DM_Weight %<>% discretize(breaks = 5)
+#data$DM_Weight %<>% discretize(breaks = 5)
 
 
 phobias <- data %>% select(starts_with("PH")) %>% colnames
