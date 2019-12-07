@@ -1,7 +1,6 @@
 
 data_weight <-
-  data %>% select("MO_Movies",
-                  "MO_Horror",
+  data %>% select("MO_Horror",
                   "MO_Thriller",
                   "MO_Comedy",
                   "MO_Romantic",
@@ -53,48 +52,113 @@ net.propagated
 
 ###########
 
-
 weightRomantic <- net.propagated %>%
   querygrain(nodes = "MO_Romantic", type = "marginal")
 
+weightRomantic.1.female <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[41,55)","female"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.1.male <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[41,55)","male"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.2.female <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[55,60)","female"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.2.male <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[55,60)","male"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.3.female <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[60,68)","female"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.3.male <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[60,68)","male"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.4.female <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[68,78)","female"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.4.male <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[68,78)","male"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.5.female <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[78,150)","female"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+weightRomantic.5.male <- net.propagated %>%
+  setEvidence(nodes = c("DM_Weight","DM_Gender"),
+              states = c("[78,150)","male"),
+              propagate = FALSE) %>%
+  propagate %>%
+  querygrain(nodes = "MO_Romantic", type = "marginal")
+
+
 weightRomantic.1 <- net.propagated %>%
   setEvidence(nodes = "DM_Weight",
-              states = "[41,55)",
+              states = "[41,5)",
               propagate = FALSE) %>%
   propagate %>%
   querygrain(nodes = "MO_Romantic", type = "marginal")
-
-weightRomantic.2 <- net.propagated %>%
-  setEvidence(nodes = "DM_Weight",
-              states = "[55,60)",
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Romantic", type = "marginal")
-
-weightRomantic.3 <- net.propagated %>%
-  setEvidence(nodes = "DM_Weight",
-              states = "[60,68)",
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Romantic", type = "marginal")
-
-weightRomantic.4 <- net.propagated %>%
-  setEvidence(nodes = "DM_Weight",
-              states = "[68,78)",
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Romantic", type = "marginal")
-
-weightRomantic.5 <- net.propagated %>%
-  setEvidence(nodes = "DM_Weight",
-              states = "[78,150)",
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Romantic", type = "marginal")
-
-
-
-
+ weightRomantic.2 <- net.propagated %>%
+   setEvidence(nodes = "DM_Weight",
+               states = "[55,60)",
+               propagate = FALSE) %>%
+   propagate %>%
+   querygrain(nodes = "MO_Romantic", type = "marginal")
+ 
+ weightRomantic.3 <- net.propagated %>%
+   setEvidence(nodes = "DM_Weight",
+               states = "[60,68)",
+               propagate = FALSE) %>%
+   propagate %>%
+   querygrain(nodes = "MO_Romantic", type = "marginal")
+ 
+ weightRomantic.4 <- net.propagated %>%
+   setEvidence(nodes = "DM_Weight",
+               states = "[68,78)",
+               propagate = FALSE) %>%
+   propagate %>%
+   querygrain(nodes = "MO_Romantic", type = "marginal")
+ 
+ weightRomantic.5 <- net.propagated %>%
+   setEvidence(nodes = "DM_Weight",
+               states = "[78,150)",
+               propagate = FALSE) %>%
+   propagate %>%
+   querygrain(nodes = "MO_Romantic", type = "marginal")
 
 weightRomantic.Table <-
   as.data.frame(
@@ -107,127 +171,39 @@ weightRomantic.Table <-
       weightRomantic.5$MO_Romantic
     )
   )
-weightRomantic.Table
 
-
-
-weightWestern <- net.propagated %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.1.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[41,55)","female"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.1.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[41,55)","male"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.2.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[55,60)","female"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.2.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[55,60)","male"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.3.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[60,68)","female"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.3.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[60,68)","male"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.4.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[68,78)","female"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.4.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[68,78)","male"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.5.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[78,150)","female"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-weightWestern.5.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("[78,150)","male"),
-              propagate = FALSE) %>%
-  propagate %>%
-  querygrain(nodes = "MO_Western", type = "marginal")
-
-# weightWestern.2 <- net.propagated %>%
-#   setEvidence(nodes = "DM_Weight",
-#               states = "[55,60)",
-#               propagate = FALSE) %>%
-#   propagate %>%
-#   querygrain(nodes = "MO_Western", type = "marginal")
-# 
-# weightWestern.3 <- net.propagated %>%
-#   setEvidence(nodes = "DM_Weight",
-#               states = "[60,68)",
-#               propagate = FALSE) %>%
-#   propagate %>%
-#   querygrain(nodes = "MO_Western", type = "marginal")
-# 
-# weightWestern.4 <- net.propagated %>%
-#   setEvidence(nodes = "DM_Weight",
-#               states = "[68,78)",
-#               propagate = FALSE) %>%
-#   propagate %>%
-#   querygrain(nodes = "MO_Western", type = "marginal")
-# 
-# weightWestern.5 <- net.propagated %>%
-#   setEvidence(nodes = "DM_Weight",
-#               states = "[78,150)",
-#               propagate = FALSE) %>%
-#   propagate %>%
-#   querygrain(nodes = "MO_Western", type = "marginal")
-
-
-weightWestern.Table <-
+weightRomanticGender.Table <-
   as.data.frame(
     rbind(
-      weightWestern$MO_Western,
-      weightWestern.1.male$MO_Western,
-      weightWestern.2.male$MO_Western,
-      weightWestern.3.male$MO_Western,
-      weightWestern.4.male$MO_Western,
-      weightWestern.5.male$MO_Western,
-      weightWestern.1.female$MO_Western,
-      weightWestern.2.female$MO_Western,
-      weightWestern.3.female$MO_Western,
-      weightWestern.4.female$MO_Western,
-      weightWestern.5.female$MO_Western
+      weightRomantic$MO_Romantic,
+      weightRomantic.1.male$MO_Romantic,
+      weightRomantic.2.male$MO_Romantic,
+      weightRomantic.3.male$MO_Romantic,
+      weightRomantic.4.male$MO_Romantic,
+      weightRomantic.5.male$MO_Romantic,
+      weightRomantic.1.female$MO_Romantic,
+      weightRomantic.2.female$MO_Romantic,
+      weightRomantic.3.female$MO_Romantic,
+      weightRomantic.4.female$MO_Romantic,
+      weightRomantic.5.female$MO_Romantic
     )
   )
-weightWestern.Table
+weightRomantic.Table
+weightRomanticGender.Table
 
+row.names(weightRomantic.Table) <-
+  c('Marginal', '[41, 55)', '[55, 60)', '[60, 68)', '[68, 78)', '[78, 60)')
+
+
+weightRomantic.Table %>%
+  kable("latex", caption = "Probabilities for liking Romantic movies conditioned to weight and gender", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
+
+
+row.names(weightRomanticGender.Table) <-
+  c('Marginal', '[41, 55) | male', '[55, 60) | male', '[60, 68) | male', '[68, 78) | male', '[78, 60) | male', '[41, 55) | female', '[55, 60) | female', '[60, 68) | female', '[68, 78) | female', '[78, 60) | female')
+
+
+weightRomanticGender.Table %>%
+  kable("latex", caption = "Probabilities for liking Romantic movies conditioned to weight and gender", booktabs = T) %>%
+  kable_styling(latex_options = c("striped", "hold_position"))
