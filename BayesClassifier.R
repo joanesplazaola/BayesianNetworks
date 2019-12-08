@@ -112,7 +112,7 @@ for (i in 1:10){
   tr_data <- train[train_10_folds != i,]
   net.k2.struct <- tr_data %>% 
     hc( score="k2") 
-  net.k2.class <- bn.fit(tr_data, method="bayes")
+  net.k2.class <- bn.fit(net.k2.struct, tr_data, method="bayes")
   net.k2.class.err[i] <- getError(tr_data, net.k2.class, id.clase=id.clase)
 }
 
@@ -121,7 +121,7 @@ for (i in 1:10){
   tr_data <- train[train_10_folds != i,]
   net.bn.struct <- tr_data %>% 
     naive.bayes( training=names(tr_data)[id.clase], explanatory=names(tr_data)[-id.clase])
-  net.bn.class <- bn.fit(tr_data, method="bayes")
+  net.bn.class <- bn.fit(net.bn.struct , tr_data, method="bayes")
   net.nb.class.err[i] <- getError(tr_data, net.bn.class, id.clase=id.clase)
 }
 
@@ -130,47 +130,14 @@ for (i in 1:10){
   tr_data <- train[train_10_folds != i,]
   net.tan.struct <- tr_data %>% 
     tree.bayes( training=names(tr_data)[id.clase], explanatory=names(tr_data)[-id.clase]) 
-  net.tan.class <- bn.fit(tr_data, method="bayes")
+  net.tan.class <- bn.fit(net.tan.struct, tr_data, method="bayes")
   net.tan.class.err[i] <- getError(tr_data, net.tan.class, id.clase=id.clase)
 }
 
-errors_ent_tr <- as.data.frame(cbind(mean(net.bic.class.err),mean(net.k2.class.err), 
+as.data.frame(cbind(mean(net.bic.class.err),mean(net.k2.class.err), 
                                      mean(net.nb.class.err), mean(net.tan.class.err)))
-errors_ent_tr
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-vars <- names(class_data)
-rows
 N.test <- rows * 0.2
 total.train <- rows * 0.8
 N.train <- round(exp(seq(1, log(rows - N.test),
@@ -178,11 +145,10 @@ N.train <- round(exp(seq(1, log(rows - N.test),
 
 
 res <- data.frame()
-for (r in 1:20) {
+for (r in 1:10) {
   for (s in unique(N.train)) {
     sampled_index <- sample(1:rows, total.train)
     train_sample <- class_data[sampled_index[1:s], ]
-    print(dim(train_sample))
     test_sample <- class_data[-sampled_index, ]
     model.bic <-
       bn.fit(x = net.bic.struct,
@@ -320,6 +286,7 @@ for (r in 1:20) {
 ggplot(data = res, aes(x = size_train, y = error, col = data)) +
   geom_line(stat = "summary", fun.y = "mean", size = 1.1) +
   scale_x_log10() + facet_wrap( ~ structure)
+
 ggplot(data = res, aes(x = size_train, y = error, col = structure)) +
   geom_line(stat = "summary", fun.y = "mean", size = 1.1) +
   scale_x_log10() + facet_wrap( ~ data)
