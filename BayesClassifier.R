@@ -9,7 +9,7 @@ estimateError <- function(classifier, class.index, test) {
 
 # We first select the needed variables (predictors and the target)
 
-target <- "SP_Looks"
+target <- "SP_Healthy_eating"
 class_data <- data %>%
   select(target,
          starts_with("IN"),
@@ -40,11 +40,28 @@ tan.class <- train %>%
   bn.fit(data = train, method = "mle")
 
 
-# We calculate the estimated errors for the fitted classifiers in the test and train subsets
-estimateError(nb.class, 1, train)
-estimateError(nb.class, 1, test)
-estimateError(tan.class, 1, train)
-estimateError(nb.class, 1, test)
+bic.class <- train %>% 
+  hc( score="bic") %>%
+  bn.fit(data=train, method="bayes")
+
+
+k2.class <- train %>% 
+  hc( score="k2") %>%
+  bn.fit(data=train, method="bayes")
+
+
+# We calculate the errors for the fitted classifiers in the test and train subsets
+
+getError(data=train, nb.class, id.clase=1)
+getError(data=train, tan.class, id.clase=1)
+getError(data=train, bic.class, id.clase=1)
+getError(data=train, k2.class, id.clase=1)
+
+getError(data=test, nb.class, id.clase=1)
+getError(data=test, tan.class, id.clase=1)
+getError(data=test, bic.class, id.clase=1)
+getError(data=test, k2.class, id.clase=1)
+
 
 # With this function we learn the most important variables for the classifier
 learnSelectiveNB <- function (data, training) {
