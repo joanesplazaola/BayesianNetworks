@@ -1,41 +1,97 @@
 #data$DM_Weight <- factor(ifelse(data$DM_Weight < 70, "<70", ">70"))
 
 data_weight <-
-  data %>% select("MO_Movies",
-                  "MO_Horror",
-                  "MO_Thriller",
-                  "MO_Comedy",
-                  "MO_Romantic",
-                  "MO_Scifi",
-                  "MO_War",
-                  "MO_Fantasy",
-                  "MO_Animated",
-                  "MO_Documentary",
-                  "MO_Western",
-                  "MO_Action",
-                  "DM_Gender")
+  data %>% select(
+    "MO_Movies",
+    "MO_Horror",
+    "MO_Thriller",
+    "MO_Comedy",
+    "MO_Romantic",
+    "MO_Scifi",
+    "MO_War",
+    "MO_Fantasy",
+    "MO_Animated",
+    "MO_Documentary",
+    "MO_Western",
+    "MO_Action",
+    "DM_Gender"
+  )
 
-data_weight$DM_Weight <- factor(ifelse(data$DM_Weight < 70, "<70", ">70"))
+data_weight$DM_Weight <-
+  factor(ifelse(data$DM_Weight < 70, "<70", ">70"))
 
 N <- nrow(data)
 n <- round(N * 0.8)
 set.seed(2019)
 indexes <- sample(1:N, n, replace = F)
-train_data_weight  <- as.data.frame(data_weight[indexes, ])
-test_data_weight <- as.data.frame(data_weight[-indexes, ])
+train_data_weight  <- as.data.frame(data_weight[indexes,])
+test_data_weight <- as.data.frame(data_weight[-indexes,])
 summary(data_weight)
 
 functions <- c(hc, tabu, hc,  tabu, hc, tabu, hc, tabu)
-args <- c("loglik","loglik",  "bic", "bic", "bde","bde", "k2", "k2")
-par(mfrow=c(1,1))
+args <- c("loglik", "loglik",  "bic", "bic", "bde", "bde", "k2", "k2")
+par(mfrow = c(1, 1))
 scores = c()
 
-for (idx in 1:(length(functions))){
-  scores <- functions[[idx]](train_data_weight, score = args[idx]) %T>%
-    graphviz.plot(layout="dot", shape = "ellipse") %>%
-    bnlearn::score(data= train_data_weight, type=args[idx]) %T>%
+
+eval_struct <- function(size, bn, train, test, name) {
+  d <- train[1:size,]
+  bn <- bn.fit(x = bn, data = d, method = "bayes")
+  gener <- stats::logLik(bn, test) / (n * dim(test)[1])
+  fit <- stats::logLik(bn, d) / (n * dim(d)[1])
+  res <-
+    data.frame(
+      "size_train" = size,
+      "fitness" = fit,
+      "gener" = gener,
+      "structure" = name
+    )
+  return (c(gener, fit))
+}
+
+
+sizes <- round(exp(seq(1, log(
+  nrow(train_data_aging)
+),+(log(
+  nrow(train_data_aging)
+) - 1) / 50)))
+
+
+for (idx in 1:(length(functions))) {
+  scores <-
+    functions[[idx]](train_data_weight, score = args[idx]) %T>%
+    graphviz.plot(layout = "dot", shape = "ellipse") %>%
+    bnlearn::score(data = train_data_weight, type = args[idx]) %T>%
     print %>%
     c(scores)
+  
+  struct <- functions[[idx]](train_data_aging, score = args[idx])
+  eval_result <-
+    sapply(
+      sizes,
+      FUN = eval_struct,
+      bn = struct,
+      train = train_data_aging,
+      test = test_data_aging,
+      name = args[idx]
+    )
+  plot(
+    log10(sizes),
+    eval_result[1, ],
+    main = args[idx],
+    ylab = "LL/nN",
+    xlab = "log(Size)",
+    type = "l",
+    ylim = c(min(eval_result), max(eval_result)),
+    col = "blue"
+  )
+  lines(log10(sizes), eval_result[2,], col = "red")
+  legend(
+    "topright",
+    legend = c("Fitting", "Generalization"),
+    col = c("red", "blue"),
+    pch = 15
+  )
 }
 
 
@@ -46,7 +102,10 @@ best_index <- length(functions) - which.max(scores) + 1
 net <-
   functions[[best_index]](as.data.frame(data_weight), score = args[best_index])
 
-net.grain <- grain(as(amat(net), "graphNEL"), data = as.data.frame(data_weight), smooth = 0.0001)
+net.grain <-
+  grain(as(amat(net), "graphNEL"),
+        data = as.data.frame(data_weight),
+        smooth = 0.0001)
 
 net.compiled <- compile(net.grain)
 net.propagated <- propagate(net.compiled)
@@ -74,13 +133,11 @@ weightScifi.2 <- net.propagated %>%
 
 
 weightScifi.Table <-
-  as.data.frame(
-    rbind(
-      weightScifi$MO_Scifi,
-      weightScifi.1$MO_Scifi,
-      weightScifi.2$MO_Scifi
-    )
-  )
+  as.data.frame(rbind(
+    weightScifi$MO_Scifi,
+    weightScifi.1$MO_Scifi,
+    weightScifi.2$MO_Scifi
+  ))
 weightScifi.Table
 
 
@@ -89,30 +146,38 @@ weightScifi <- net.propagated %>%
   querygrain(nodes = "MO_Scifi", type = "marginal")
 
 weightScifi.1.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("<70","female"),
-              propagate = FALSE) %>%
+  setEvidence(
+    nodes = c("DM_Weight", "DM_Gender"),
+    states = c("<70", "female"),
+    propagate = FALSE
+  ) %>%
   propagate %>%
   querygrain(nodes = "MO_Scifi", type = "marginal")
 
 weightScifi.1.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c("<70","male"),
-              propagate = FALSE) %>%
+  setEvidence(
+    nodes = c("DM_Weight", "DM_Gender"),
+    states = c("<70", "male"),
+    propagate = FALSE
+  ) %>%
   propagate %>%
   querygrain(nodes = "MO_Scifi", type = "marginal")
 
 weightScifi.2.female <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c(">70","female"),
-              propagate = FALSE) %>%
+  setEvidence(
+    nodes = c("DM_Weight", "DM_Gender"),
+    states = c(">70", "female"),
+    propagate = FALSE
+  ) %>%
   propagate %>%
   querygrain(nodes = "MO_Scifi", type = "marginal")
 
 weightScifi.2.male <- net.propagated %>%
-  setEvidence(nodes = c("DM_Weight","DM_Gender"),
-              states = c(">70","male"),
-              propagate = FALSE) %>%
+  setEvidence(
+    nodes = c("DM_Weight", "DM_Gender"),
+    states = c(">70", "male"),
+    propagate = FALSE
+  ) %>%
   propagate %>%
   querygrain(nodes = "MO_Scifi", type = "marginal")
 

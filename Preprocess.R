@@ -1,4 +1,3 @@
-
 library(tidyverse)
 library(GGally)
 library(magrittr)
@@ -15,12 +14,15 @@ library(Rgraphviz)
 library(pROC)
 library(arulesCBA)
 library(kableExtra)
+
 data <-
   read_csv("data/Dataset.csv")
 
 data %<>%  drop_na(DM_Gender)
 
-data %<>% mutate_if(is.character, ~ replace_na(., names(which.max(table(.)))))
+data %<>% mutate_if(is.character, ~ replace_na(., names(which.max(table(
+  .
+)))))
 data_nominal <-
   c('DM_Gender',
     'DM_Handed',
@@ -102,6 +104,8 @@ data$DM_Height %<>% discretize(breaks = 5)
 
 
 phobias <- data %>% select(starts_with("PH")) %>% colnames
+
+# Select variables to join into 3 groups (1,2  3  4,5)
 hirutan <-
   c(
     "IN_Science_Technology",
@@ -139,7 +143,7 @@ hirutan <-
   )
 
 
-# 4-5 eta beste danak
+# Select variables to join into 2 groups (1,2,3  4,5)
 biTop <-
   c(
     phobias,
@@ -160,7 +164,7 @@ biTop <-
     "MO_Rock"
   )
 
-# 1-2 eta beste danak
+# Select variables to join into 2 groups (1,2  3,4,5)
 biBot <-
   c(
     "IN_Outdoors",
@@ -180,7 +184,7 @@ biBot <-
   )
 
 
-# Hemen aldatzen dittugu hiru binetan jarriz
+# Join into 3 gropus
 data %<>% mutate_at(c(hirutan),  ~ fct_collapse(
   .x,
   "1" = c("1", "2"),
@@ -188,11 +192,10 @@ data %<>% mutate_at(c(hirutan),  ~ fct_collapse(
   "3" = c("4", "5")
 ))
 
-# Hemen aldatzen dittugu bi binetan jarriz, goiko biak eta azpiko hiruak
+# Join into 2 group
 data %<>% mutate_at(c(biTop),  ~ fct_collapse(.x, "1" = c("1", "2", "3"),
                                               "2" = c("4", "5")))
 
-# Hemen aldatzen dittugu bi binetan jarriz, beheko biak eta goiko hiruak
+# Join into 2 groups
 data %<>% mutate_at(c(biBot),  ~ fct_collapse(.x, "1" = c("1", "2"),
                                               "2" = c("3", "4", "5")))
-
