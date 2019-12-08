@@ -171,7 +171,8 @@ errors_ent_tr
 
 vars <- names(class_data)
 rows
-N.test <- rows/2
+N.test <- rows * 0.2
+total.train <- rows * 0.8
 N.train <- round(exp(seq(1, log(rows - N.test),
                            + (log(N.test)-1) / 50)))
 
@@ -179,19 +180,20 @@ N.train <- round(exp(seq(1, log(rows - N.test),
 res <- data.frame()
 for (r in 1:20) {
   for (s in unique(N.train)) {
-    sampled_index <- sample(1:rows, N.test)
-    train <- class_data[sampled_index[1:s], ]
-    test <- class_data[-sampled_index, ]
+    sampled_index <- sample(1:rows, total.train)
+    train_sample <- class_data[sampled_index[1:s], ]
+    print(dim(train_sample))
+    test_sample <- class_data[-sampled_index, ]
     model.bic <-
       bn.fit(x = net.bic.struct,
-             data = train,
+             data = train_sample,
              method = "bayes")
     res <- rbind(
       res,
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = test,
+          data = test_sample,
           model = model.bic,
           id.clase = 1
         ),
@@ -205,7 +207,7 @@ for (r in 1:20) {
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = train,
+          data = train_sample,
           model = model.bic,
           id.clase = 1
         ),
@@ -217,14 +219,14 @@ for (r in 1:20) {
     
     model.k2 <-
       bn.fit(x = net.k2.struct,
-             data = train,
+             data = train_sample,
              method = "bayes")
     res <- rbind(
       res,
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = test,
+          data = test_sample,
           model = model.k2,
           id.clase = 1
         ),
@@ -238,7 +240,7 @@ for (r in 1:20) {
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = train,
+          data = train_sample,
           model = model.k2,
           id.clase = 1
         ),
@@ -248,14 +250,14 @@ for (r in 1:20) {
       )
     )
     model.naive <- bn.fit(x = net.bn.struct,
-                          data = train,
+                          data = train_sample,
                           method = "bayes")
     res <- rbind(
       res,
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = test,
+          data = test_sample,
           model = model.naive,
           id.clase = 1
         ),
@@ -269,7 +271,7 @@ for (r in 1:20) {
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = train,
+          data = train_sample,
           model = model.naive,
           id.clase = 1
         ),
@@ -280,14 +282,14 @@ for (r in 1:20) {
     )
     model.tan <-
       bn.fit(x = net.tan.struct,
-             data = train,
+             data = train_sample,
              method = "bayes")
     res <- rbind(
       res,
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = test,
+          data = test_sample,
           model =model.tan,
           id.clase = 1
         ),
@@ -301,7 +303,7 @@ for (r in 1:20) {
       data.frame(
         "size_train" = s,
         "error" = getError(
-          data = train,
+          data = train_sample,
           model = model.tan,
           id.clase = 1
         ),
@@ -327,3 +329,11 @@ ggplot(data = res, aes(x = size_train, y = error, col = structure)) +
 snb <- learnSelectiveNB(class_data, training = target)
 
 sum(predictSelectiveNB(snb, data = test) != test[, 1]) / length(test[, 1])
+
+
+ggplot(data = res, aes(x = size_train, y = error, col = data)) +
+  geom_line(stat = "summary", fun.y = "mean", size = 1.1) +
+  scale_x_log10() + facet_wrap( ~ structure)
+
+
+

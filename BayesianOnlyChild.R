@@ -23,6 +23,8 @@ for (idx in 1:(length(functions))){
     bnlearn::score(data= train_data_onlyChild, type=args[idx]) %T>%
     print %>%
     c(scores)
+
+  
 }
 
 
@@ -74,3 +76,5 @@ healthyOnlyChild.Table
 healthyOnlyChild.Table %>%
   kable("latex", caption = "Probabilities for Healthy Habits conditioned by being Only Child", booktabs = T) %>%
   kable_styling(latex_options = c("striped", "hold_position"))
+
+
